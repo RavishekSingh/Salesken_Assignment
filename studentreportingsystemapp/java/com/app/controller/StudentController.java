@@ -25,9 +25,10 @@ public class StudentController {
 	@Autowired
 	private StudentRepository sRepo;
 
+
 	@GetMapping("/saveStudent")
 	public String saveStudent() {
-		return "Student Saved";
+		return "saveStudent";
 
 	}
 
@@ -37,19 +38,50 @@ public class StudentController {
 			@RequestParam Integer semester) {
 		Student student = new Student(studentId, studentName, mathematics, science, english, semester);
 		sRepo.save(student);
-		return "Welcome Student";
+		return "welcome";
 
 	}
 
 	@GetMapping("/welcome")
 	public String welcome() {
-		return "Welcome";
+		return "welcome";
 
+	}
+
+	
+
+	@GetMapping("/avgMarks")
+	public String avgMarks() {
+
+		return "avgMarks";
+	}
+
+	@PostMapping("/avgMarks")
+	public String avgMarks(Model model, @RequestParam String subject) {
+		Iterable<Student> itr = sRepo.findAll();
+
+		List<Student> students = new ArrayList<>();
+		itr.forEach(students::add);
+		int c = 0;
+		int sum = 0;
+		for (Student st : students) {
+			System.out.println(st);
+			c++;
+			if (subject.equalsIgnoreCase("mathematics")) {
+				sum += st.getMathematics();
+			} else if (subject.equalsIgnoreCase("english")) {
+				sum += st.getEnglish();
+			} else if (subject.equalsIgnoreCase("science")) {
+				sum += st.getScience();
+			}
+		}
+		model.addAttribute("avgMarks", sum / c);
+		return "avgResult";
 	}
 
 	@GetMapping("/getPercentage")
 	public String getPercentAgeView() {
-		return "Percentage";
+		return "getPercentage";
 	}
 
 	@PostMapping("/getPercentage")
@@ -64,41 +96,12 @@ public class StudentController {
 		sum = sum / c;
 		sum = sum * 100 / 300;
 		model.addAttribute("avg", sum);
-		return "Result";
+		return "result";
 	}
-
-	@GetMapping("/avgMarks")
-	public String avgMarks() {
-
-		return "Average_Marks";
-	}
-
-	@PostMapping("/avgMarks")
-	public String avgMarks(Model model, @RequestParam String subject) {
-		Iterable<Student> itr = sRepo.findAll();
-
-		List<Student> students = new ArrayList<>();
-		itr.forEach(students::add);
-		int c = 0;
-		int sum = 0;
-		for (Student st : students) {
-			System.out.println(st);
-			c++;
-			if (subject.equalsIgnoreCase("Mathematics")) {
-				sum += st.getMathematics();
-			} else if (subject.equalsIgnoreCase("English")) {
-				sum += st.getEnglish();
-			} else if (subject.equalsIgnoreCase("Science")) {
-				sum += st.getScience();
-			}
-		}
-		model.addAttribute("avgMarks", sum / c);
-		return "AverageResult";
-	}
-
+	
 	@GetMapping("/top2")
 	public String top2View() {
-		return "Top_2";
+		return "top2";
 	}
 
 	@PostMapping("/top2")
@@ -135,7 +138,7 @@ public class StudentController {
 		}
 		
 		model.addAttribute("top2", st);
-		return "Top2_Result";
+		return "top2result";
 	}
 	
 	
